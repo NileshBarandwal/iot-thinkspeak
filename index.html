@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+	<script src="https://cdn3.devexpress.com/jslib/17.1.6/js/dx.all.js"></script>
+</head>
+
+<body>
+
+	<!-- https://api.thingspeak.com/channels/1132445/feeds.json?api_key=05CTD4W4VKPX7M6Q&results=11 -->
+
+	<div class="flex-container" id="flex-container">
+		
+		<canvas id="myChart" width="1600" height="900"></canvas>
+
+	  <main class="main">
+		<h1 class="main__title">Gauge Chart</h1>
+		
+		<div class="gauge-container">
+		  <div class="gauge"></div>
+		</div>
+	  </main>
+	  
+	  <svg width="0" height="0" version="1.1" class="gradient-mask" xmlns="http://www.w3.org/2000/svg">
+		<defs>
+			<linearGradient id="gradientGauge">
+			  <stop class="color-green" offset="0%"/>
+			  <stop class="color-yellow" offset="17%"/>
+			  <stop class="color-yellow" offset="40%"/>
+			  <stop class="color-red" offset="87%"/>
+			  <stop class="color-red" offset="100%"/>
+			</linearGradient>
+		</defs>  
+	  </svg>
+	  
+		</div>
+
+		<div class="container">
+			<form id="form">
+			  <label for="fname">API Key</label>
+			  <input type="text" id="urls" name="firstname" placeholder="Your name..">
+		  
+			  <label for="lname">Channel ID</label>
+			  <input type="text" id="channelid" name="lastname" placeholder="Your last name..">
+		  
+			  <label for="subject">Data</label>
+			  <textarea id="textarea" name="subject" placeholder="After submitting you will see your data here.." style="height:200px"></textarea>
+		  
+			  <input type="submit" id="submit" value="Submit"> 
+			</form>
+		  </div>	  	
+
+</body>
+
+<style>
+	
+	  body {
+		background-image: linear-gradient(140deg, #212629, #395467);
+		min-height: 100vh;
+		font-family: 'Open Sans', sans-serif;
+		padding-top: 10px;
+	  }
+	  
+	  .color-red {
+		stop-color: #e23131;
+	  }
+	  
+	  .color-yellow {
+		stop-color: #fbe500;
+	  }
+	  
+	  .color-green {
+		stop-color: #25cd6b;
+	  }
+	  
+	  .footer {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		background-color: #26323a;
+		padding: 20px;
+		text-align: center;
+		font-size: 12px;
+		letter-spacing: 3px;
+		word-spacing: 4px;
+	  }
+	  .footer a {
+		letter-spacing: 2px;
+		word-spacing: 2px;
+	  }
+	  
+	  .main {
+		-moz-box-shadow:    inset 0 0 10px #000000;
+		-webkit-box-shadow: inset 0 0 10px #000000;
+		box-shadow:         inset 0 0 10px #000000;
+		max-width: 1200px;
+		margin: 0px auto 22px auto;
+	  }
+	  .main__title {
+		  color: white;
+		text-align: center;
+		font-size: 48px;
+	  }
+	  
+	  .gradient-mask {
+		visibility: hidden;
+	  }
+	  
+	  .button {
+		position: absolute;
+		right: 40px;
+		top: 40px;
+		border: 2px solid #fff;
+		background-color: #26323a;
+		color: #fff;
+		font-weight: bold;
+		font-size: 16px;
+		padding: 10px 20px;
+		border-radius: 4px;
+		cursor: pointer;
+		-webkit-transition: .2s;
+		transition: .2s;
+	  }
+	  .button:active {
+		-webkit-transform: translateY(3px);
+				transform: translateY(3px);
+		outline: 0;
+	  }
+	  .button:hover, .button:focus {
+		outline: 0;
+		background: linear-gradient(-140deg, #212629, #395467);
+	  }
+	  
+	  .gauge-container {
+		padding: 20px;
+		display: -webkit-box;
+		display: flex;
+		justify-content: space-around;
+	  }
+	  
+	  .gauge {
+		height: 220px;
+		width: 300px;
+	  }
+	  .gauge .dxg-range.dxg-background-range {
+		fill: url(#gradientGauge);
+	  }
+	  .gauge .dxg-line {
+		-webkit-transform: scaleX(1.04) scaleY(1.03) translate(-4px, -4px);
+				transform: scaleX(1.04) scaleY(1.03) translate(-4px, -4px);
+	  }
+	  .gauge .dxg-line path:first-child,
+	  .gauge .dxg-line path:last-child {
+		display: none;
+	  }
+	  .gauge .dxg-line path:nth-child(2),
+	  .gauge .dxg-line path:nth-child(6) {
+		stroke: #ed811c;
+	  }
+	  .gauge .dxg-line path:nth-child(3),
+	  .gauge .dxg-line path:nth-child(5) {
+		stroke: #a7db29;
+	  }
+	  .gauge .dxg-line path:nth-child(4) {
+		stroke: #25cd6b;
+	  }
+	  .gauge .dxg-elements text:first-child {
+		-webkit-transform: translate(19px, 13px);
+				transform: translate(19px, 13px);
+	  }
+	  .gauge .dxg-elements text:last-child {
+		-webkit-transform: translate(-27px, 14px);
+				transform: translate(-27px, 14px);
+	  }
+	  .gauge .dxg-value-indicator path {
+		-webkit-transform: scale(1.2) translate(0, -5px);
+				transform: scale(1.2) translate(0, -5px);
+		-webkit-transform-origin: center center;
+				transform-origin: center center;
+	  }
+	  .gauge .dxg-value-indicator .dxg-title {
+		text-transform: uppercase;
+	  }
+	  .gauge .dxg-value-indicator .dxg-title text:first-child {
+		-webkit-transform: translateY(5px);
+				transform: translateY(5px);
+	  }
+	  .gauge .dxg-value-indicator .dxg-spindle-border:nth-child(4),
+	  .gauge .dxg-value-indicator .dxg-spindle-hole:nth-child(5) {
+		-webkit-transform: translate(0, -109px);
+				transform: translate(0, -109px);
+	  }
+	  .gauge .dxg-value-indicator .dxg-spindle-hole {
+		fill: #26323a;
+	  }
+	  
+</style>
+
+<style>
+
+	#myChart{
+		width: 50% !important;
+		height: 50% !important;
+		background: white;
+		-moz-box-shadow:    inset 0 0 10px #000000;
+		-webkit-box-shadow: inset 0 0 10px #000000;
+		box-shadow:         inset 0 0 10px #000000;
+		margin: 15px 0 45px 15px;
+	}
+	
+	body {font-family: Arial, Helvetica, sans-serif;}
+	* {box-sizing: border-box;}
+
+	.flex-container {
+		display: none;
+	  }
+	
+	input[type=text], select, textarea {
+	  width: 100%;
+	  padding: 12px;
+	  border: 1px solid #ccc;
+	  border-radius: 4px;
+	  box-sizing: border-box;
+	  margin-top: 6px;
+	  margin-bottom: 16px;
+	  resize: vertical;
+	}
+	
+	input[type=submit] {
+	  background-color: #4CAF50;
+	  color: white;
+	  padding: 12px 20px;
+	  border: none;
+	  border-radius: 4px;
+	  cursor: pointer;
+	}
+	
+	input[type=submit]:hover {
+	  background-color: #45a049;
+	}
+	
+	.container {
+	  border-radius: 5px;
+	  background-color: #f2f2f2;
+	  padding: 20px;
+	}
+
+</style>
+
+<script type="text/javascript">
+
+//var channeldata = {};
+// var i=0;
+
+//var dateofcreation = [];
+// var actualdata = [];
+
+//for (;i < data.feeds.length - 1; i++) {
+
+    //	var temp = {};
+    //	temp[v.zones[i].district] = v.zones[i].zone;
+    
+      //  if(!channeldata[data.feeds[i].field1])
+      //  channeldata[data.feeds[i].field1] = {};
+
+	//	channeldata[data.feeds[i].field1] = data.feeds[i].created_at;
+		
+		// x: new Date(),
+
+	//	somedata.push(new Date(channeldata[data.feeds[i].field1]));
+
+		//dateofcreation.push(new Date(data.feeds[i].created_at))
+
+		//actualdata.push(data.feeds[i].field1)
+
+	//	console.log(new Date(channeldata[data.feeds[i].field1]));
+//}
+
+// console.log(channeldata);
+
+// console.log(somedata)
+//console.log(Object.keys(DistrictColorCode).length);
+
+</script>
+
+<script>
+
+//var url = 'https://api.thingspeak.com/channels/1132445/feeds.json?api_key=05CTD4W4VKPX7M6Q&results=11';
+
+$("#form").submit(function(e) {
+    e.preventDefault();
+});
+
+document.getElementById('submit').addEventListener("click", function() {//call function here});
+
+var url = document.getElementById('urls').value;
+var chid = document.getElementById('channelid').value;
+
+document.getElementById("flex-container").style.display = "block";
+document.getElementById("flex-container").style.display = "flex";
+
+fetch("https://api.thingspeak.com/channels/"+chid+"/feeds.json?api_key="+url+"&results=11")
+.then((resp) => resp.json()) // Transform the data into json
+.then(function(thingspeakapidata) {
+  // Create and append the li's to the ul
+  var apidata= []
+
+  apidata.push(thingspeakapidata.length)
+  console.log(thingspeakapidata.feeds)
+
+  var i=0;
+
+var dateofcreation = [];
+var actualdata = [];
+var textareadata = [];
+
+for (;i < thingspeakapidata.feeds.length; i++) {
+
+	//	dateofcreation.push(new Date(thingspeakapidata.feeds[i].created_at))
+
+		actualdata.push(thingspeakapidata.feeds[i].field1)
+
+		var ts = new Date(thingspeakapidata.feeds[i].created_at);
+
+		dateofcreation.push(ts.toDateString()+"-"+ts.toLocaleTimeString())
+
+		console.log(ts.toDateString());
+
+		  if(!textareadata[thingspeakapidata.feeds[i].field1])
+        textareadata["thinkspekdata"] = {};
+
+		textareadata["data"] = thingspeakapidata.feeds[i].field1;
+		textareadata["date"] = thingspeakapidata.feeds[i].created_at;
+
+		document.getElementById('textarea').innerHTML = "Latest Updated data : "+"\n"+"date = "+ts.toDateString()+"-"+ts.toLocaleTimeString()+"\n"+"data = "+thingspeakapidata.feeds[i].field1;
+
+		 a = thingspeakapidata.feeds[i].field1;
+
+			$(function () {
+
+		class GaugeChart {
+		  constructor(element, params) {
+			this._element = element;
+			this._initialValue = params.initialValue;
+			this._higherValue = params.higherValue;
+			this._title = params.title;
+			this._subtitle = params.subtitle;
+		  }
+	  
+		  _buildConfig() {
+			let element = this._element;
+	  
+			return {
+			  value: this._initialValue,
+			  valueIndicator: {
+				color: '#fff' },
+	  
+			  geometry: {
+				startAngle: 180,
+				endAngle: 360 },
+	  
+			  scale: {
+				startValue: 0,
+				endValue: this._higherValue,
+				customTicks: [0, 100, 200, 300, 400, 500, 600, 700, 800, 1000],
+				tick: {
+				  length: 8 },
+	  
+				label: {
+				  font: {
+					color: '#87959f',
+					size: 9,
+					family: '"Open Sans", sans-serif' } } },
+	  
+	  
+	  
+			  title: {
+				verticalAlignment: 'bottom',
+				text: this._title,
+				font: {
+				  family: '"Open Sans", sans-serif',
+				  color: '#fff',
+				  size: 10 },
+	  
+				subtitle: {
+				  text: this._subtitle,
+				  font: {
+					family: '"Open Sans", sans-serif',
+					color: '#fff',
+					weight: 700,
+					size: 28 } } },
+	  
+	  
+	  
+			  onInitialized: function () {
+				let currentGauge = $(element);
+				let circle = currentGauge.find('.dxg-spindle-hole').clone();
+				let border = currentGauge.find('.dxg-spindle-border').clone();
+	  
+				currentGauge.find('.dxg-title text').first().attr('y', 48);
+				currentGauge.find('.dxg-title text').last().attr('y', 28);
+				currentGauge.find('.dxg-value-indicator').append(border, circle);
+			  } };
+	  
+	  
+		  }
+	  
+		  init() {
+			$(this._element).dxCircularGauge(this._buildConfig());
+		  }}
+	  
+		  
+	  
+		$(document).ready(function () {
+	  
+		  $('.gauge').each(function (index, item) {
+			let params = {
+			  initialValue: a,
+			  higherValue: 1000,
+			  title: `Temperature ${index + 1}`,
+			  subtitle: a+'ºC' };
+	  
+	  
+			let gauge = new GaugeChart(item, params);
+			gauge.init();
+		  });
+
+		});
+	  
+	  });
+}
+
+console.log('thingspeakapidata',thingspeakapidata.feeds.length)
+
+console.log('text',textareadata)
+
+console.log('thingspeakapidata dateofcreation',dateofcreation)
+
+console.log('thingspeakapidata actualdata',actualdata)
+
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: dateofcreation,
+    datasets: [
+	{ 
+		data: actualdata,
+		label: "Data",
+		borderColor: "#3e95cd",
+		fill: false
+	  }
+    ]
+  }
+});
+
+  })
+
+});
+
+</script>
+
+<script>
+
+</script>
+
+
+</html>
+
