@@ -7,9 +7,22 @@
 	<script src="https://cdn3.devexpress.com/jslib/17.1.6/js/dx.all.js"></script>
 </head>
 	
-	<script>
+<!-- 	<script>
   window.watsonAssistantChatOptions = {
       integrationID: "7cc2e7d4-19fa-466d-adcf-fdfbbd822d5e", // The ID of this integration.
+      region: "eu-gb", // The region your integration is hosted in.
+      serviceInstanceID: "e178f709-7547-4169-a1c4-12d4442288c0", // The ID of your service instance.
+      onLoad: function(instance) { instance.render(); }
+    };
+  setTimeout(function(){
+    const t=document.createElement('script');
+    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
+    document.head.appendChild(t);
+  });
+</script> -->
+	<script>
+  window.watsonAssistantChatOptions = {
+      integrationID: "ad80beec-2735-46c4-8ba7-9ffac5dffc09", // The ID of this integration.
       region: "eu-gb", // The region your integration is hosted in.
       serviceInstanceID: "e178f709-7547-4169-a1c4-12d4442288c0", // The ID of your service instance.
       onLoad: function(instance) { instance.render(); }
@@ -483,7 +496,7 @@ var myChart = new Chart(ctx, {
 
 </script>
 	
-	<script>
+<!-- 	<script>
   window.watsonAssistantChatOptions = {
       integrationID: "7cc2e7d4-19fa-466d-adcf-fdfbbd822d5e", // The ID of this integration.
       region: "eu-gb", // The region your integration is hosted in.
@@ -495,7 +508,7 @@ var myChart = new Chart(ctx, {
     t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
     document.head.appendChild(t);
   });
-</script>
+</script> -->
 
 
 </html>
